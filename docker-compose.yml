@@ -1,0 +1,14 @@
+networks:
+  wooms:
+    external: true
+
+services:
+  wooms:
+    container_name: front
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - 5173:5173 
+    networks:
+      - wooms

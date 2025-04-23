@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import imgLogo from '../../assets/logo/imgLogo.png';
 
-const baseUrl = 'https://localhost';
+const baseUrl = 'https://wooms.duckdns.org';
 
 const Signup = () => {
   const navigate = useNavigate();

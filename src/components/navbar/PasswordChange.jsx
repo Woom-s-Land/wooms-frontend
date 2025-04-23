@@ -10,7 +10,7 @@ import dialogImg from '../../assets/dialog/dialog box big.png';
 import eye_open from '../../assets/common/eye_open.png';
 import eye_close from '../../assets/common/eye_close.png';
 
-const baseUrl = 'https://localhost';
+const baseUrl = 'https://wooms.duckdns.org';
 
 const PasswordChange = ({ onClose }) => {
   const dispatch = useDispatch();

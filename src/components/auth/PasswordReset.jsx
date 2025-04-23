@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const baseUrl = 'http://i11e206.p.ssafy.io';
+const baseUrl = 'http://localhost';
 
 const PasswordReset = ({ onClose }) => {
   const [emailInput, setEmailInput] = useState('');

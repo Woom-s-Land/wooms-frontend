@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import imgLogo from '../../assets/logo/imgLogo.png';
 
-const baseUrl = 'https://i11e206.p.ssafy.io';
+const baseUrl = 'https://localhost';
 
 const Signup = () => {
   const navigate = useNavigate();

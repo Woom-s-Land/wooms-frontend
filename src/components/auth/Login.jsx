@@ -11,7 +11,7 @@ import GoogleLogo from '../../assets/logo/google.svg';
 import LoadingBus from '../common/LoadingBus';
 import imgLogo from '../../assets/logo/imgLogo.png';
 
-const baseUrl = 'https://i11e206.p.ssafy.io';
+const baseUrl = 'https://localhost';
 
 const Login = () => {
   const dispatch = useDispatch();

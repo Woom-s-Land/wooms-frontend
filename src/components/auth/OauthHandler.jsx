@@ -5,7 +5,7 @@ import axios from 'axios';
 import { authActions } from '../../store/authSlice';
 import Loading from '../common/Loading';
 
-const baseUrl = 'https://https://wooms.duckdns.org';
+const baseUrl = 'https://wooms.duckdns.org';
 
 const OauthHandler = () => {
   const navigate = useNavigate();

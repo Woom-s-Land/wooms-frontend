@@ -87,7 +87,7 @@ const postPhoto = async (woomsId, mapId, imageFile) => {
   try {
     const response = await basicAxios({
       method: 'post',
-      url: `wooms/${woomsId}`,
+      url: `wooms/${woomsId}/photos`,
       data: formData,
       headers: {
         'Content-Type': 'multipart/form-data',

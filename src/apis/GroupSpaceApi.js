@@ -89,9 +89,6 @@ const postPhoto = async (woomsId, mapId, imageFile) => {
       method: 'post',
       url: `wooms/${woomsId}/photos`,
       data: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
     });
     return response.data;
   } catch (error) {

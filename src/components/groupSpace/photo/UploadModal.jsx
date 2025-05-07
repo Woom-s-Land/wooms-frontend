@@ -106,6 +106,7 @@ const UploadModal = ({ onClose }) => {
   };
 
   const handleUpload = async () => {
+    console.log("업로드 실행!");
     if (files.length === 0) {
       alertActions.showAlert({
         message: '업로드할 사진이 없습니다.',
@@ -128,14 +129,16 @@ const UploadModal = ({ onClose }) => {
     try {
       const canvas = await html2canvas(polaroidRef.current);
       const dataURL = canvas.toDataURL('image/png');
-
+      console.log("dataURL : " + dataURL);
+      
       const blob = await fetch(dataURL).then((res) => res.blob());
+      console.log("blob : " + blob);
       const file = new File([blob], 'captured_image.png', {
         type: 'image/png',
       });
-
+      console.log("file : " + file);
       await GroupPhotoApi.postPhoto(woomsId, mapId, file);
-
+      console.log("돌아왔나?");
       dispatch(
         alertActions.showAlert({
           message: '사진이 성공적으로 업로드되었습니다.',

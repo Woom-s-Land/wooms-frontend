@@ -20,7 +20,15 @@ const ColorPaletteEditor = ({ onClose, onUpdatePalette }) => {
     setCurrentPalette(palettes[index]);
     setIsDropdownOpen(false);
   };
+  // 여기서 ColorButton 클릭 시 호출될 핸들러
+  const handleColorClick = (color) => {
+    // 예: 클릭된 색 하나만 따로 저장하거나…
+    console.log('clicked color:', color);
+    // 또는 currentPalette 자체를 수정하고 싶으면
+    // setCurrentPalette(prev => prev.map(c => c === color ? newColor : c));
+  };
 
+  
   const chunkArray = (array, chunkSize) => {
     const result = [];
     for (let i = 0; i < array.length; i += chunkSize) {
@@ -59,8 +67,22 @@ const ColorPaletteEditor = ({ onClose, onUpdatePalette }) => {
             </div>
           )}
         </div>
-
         <div className='flex flex-col gap-2 mb-4'>
+          {paletteChunks.map((chunk, rowIndex) =>
+            rowIndex < 4 ? (
+              <div key={rowIndex} className='flex flex-wrap gap-2'>
+                {chunk.map((color, colorIndex) => (
+                  <ColorButton
+                    key={colorIndex}
+                    color={color}
+                    onClick={handleColorClick}
+                  />
+                ))}
+              </div>
+            ) : null
+          )}
+        </div>
+        {/* <div className='flex flex-col gap-2 mb-4'>
           {paletteChunks.map((chunk, rowIndex) =>
             rowIndex < 4 ? (
               <div key={rowIndex} className='flex flex-wrap gap-2'>
@@ -72,7 +94,7 @@ const ColorPaletteEditor = ({ onClose, onUpdatePalette }) => {
               void 0
             )
           )}
-        </div>
+        </div> */}
 
         <Button
           label='확인'

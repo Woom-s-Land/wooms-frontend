@@ -1,8 +1,5 @@
-# .github/workflows/frontend-deploy.yml
+name: Frontend CI/CD (scp → SSH)
 
-name: Frontend CI/CD to EC2
-
-# develop#2 브랜치에 push되거나 수동 실행 시
 on:
   push:
     branches: [ 'develop#2' ]
@@ -10,22 +7,31 @@ on:
 
 jobs:
   deploy:
-    name: SSH & Deploy Frontend
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout (develop#2)
-        uses: actions/checkout@v3
-        with:
-          ref: 'develop#2'
+      # 1) 코드 가져오기
+      - uses: actions/checkout@v3
 
-      - name: SSH 키 설정
+      # 2) SSH 키 설치
+      - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
 
-      - name: EC2에 SSH 접속 후 빌드·배포
+      # 3) scp로 원격 경로에 싱크
+      - name: Sync code to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "./"                           # workspace 전체
+          target: "~/wooms-frontend"             # EC2 실제 배포 폴더
+
+      # 4) SSH로 빌드·배포
+      - name: Build & Deploy on EC2
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -33,21 +39,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e
-
-            # 프론트엔드 코드 경로로 이동 (EC2에 맞게 경로 수정)
             cd ~/wooms-frontend
-
-            # 최신 코드 가져오기
-            git pull origin 'develop#2'
-
-            # Docker Compose로 빌드 (no-cache 옵션 포함)
             docker compose build --no-cache
-
-            # 기존 컨테이너 내려서
             docker compose down
-
-            # 새로 빌드한 이미지로 다시 띄우기
             docker compose up -d
-
-            # 불필요 이미지 정리
             docker image prune -f

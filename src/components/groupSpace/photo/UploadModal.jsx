@@ -59,17 +59,17 @@ const UploadModal = ({ onClose }) => {
       setImageSrc(reader.result);
 
       try {
-        const metadata = await exifr.parse(file);
+        const metadata = await exifr.gps(file);
+
         const latitude = metadata.latitude;
         const longitude = metadata.longitude;
 
-        const id = await checkPixelNumber(latitude, longitude);
+        const id = await checkPixelNumber(longitude, latitude);
         setMapId(id);
       } catch (err) {
-        alertActions.showAlert({
-          message: '사진 메타데이터 읽기에 실패하였습니다.',
-          type: 'ERROR',
-        });
+        dispatch(
+          alertActions.showAlert({message: '사진 메타데이터 읽기에 실패하였습니다.', type: 'ERROR',})
+        )
       }
     };
 
@@ -87,16 +87,16 @@ const UploadModal = ({ onClose }) => {
       setImageSrc(reader.result);
 
       try {
-        const metadata = await exifr.parse(file);
-
+        const metadata = await exifr.gps(file);
+        
         const latitude = metadata?.latitude;
         const longitude = metadata?.longitude;
 
-        const id = checkPixelNumber(longitude, latitude);
+        const id = await checkPixelNumber(longitude, latitude);
         setMapId(id);
       } catch (err) {
         alertActions.showAlert({
-          message: '사진 메타데이터 읽기에 실패하였습니다.',
+          message: '메타데이터가 없는 사진은 채움에 채워지지 않아요!',
           type: 'ERROR',
         });
       }
@@ -108,22 +108,11 @@ const UploadModal = ({ onClose }) => {
   const handleUpload = async () => {
     console.log("업로드 실행!");
     if (files.length === 0) {
-      alertActions.showAlert({
-        message: '업로드할 사진이 없습니다.',
-        type: 'ERROR',
-      });
+      dispatch(
+        alertActions.showAlert({ message: '업로드할 사진이 없습니다.', type: 'ERROR' })
+      );
       return;
     }
-
-    if (mapId === null) {
-      alertActions.showAlert({
-        message:
-          '메타데이터에 해당되는 위도, 경도를 찾을 수 없습니다. 사진 정보를 확인해주세요.',
-        type: 'ERROR',
-      });
-      return;
-    }
-
     setLoading(true);
 
     try {

@@ -1,57 +1,30 @@
-const directionMap = {
-  d: 0, // DOWN
-  u: 1, // UP
-  r: 2, // RIGHT
-  l: 3, // LEFT
-};
+const context = import.meta.glob('../assets/{0..11}/*.png', { eager: true });
 
-const loadCharacterImages = () => {
-  const allImages = {};
+// 2) 방향·프레임 맵
+const directionMap = { d:0, u:1, r:2, l:3 };
+const frameMap = new Map([1,2,4,5,6,8].map((frame, idx) => [frame, idx]));
 
-  // Vite의 import.meta.glob을 사용하여 동적으로 파일을 로드합니다.
-  const context = import.meta.glob('../assets/{0..11}/*.png', { eager: true });
+// 3) 최종 매핑 객체
+export const allCharacterImages = {};
 
-  // 프레임 번호를 순서대로 배열의 인덱스로 변환하기 위한 맵을 생성합니다.
-  const frameMap = new Map(
-    [1, 2, 4, 5, 6, 8].map((frame, index) => [frame, index])
-  );
+// 4) glob 결과를 순회하며 URL 문자열만 저장
+Object.entries(context).forEach(([filePath, mod]) => {
+  // '../assets/5/u4.png'  →  ['5', 'u4']
+  const [charNo, fileName] = filePath
+    .replace('../assets/', '')
+    .replace('.png','')
+    .split('/');
 
-  Object.keys(context).forEach((key) => {
-    // 파일 경로에서 상대 경로와 확장자를 제거하여 필요한 부분만 추출합니다.
-    const path = key.replace('../assets/', '').replace('.png', '');
+  const dirChar  = fileName[0];           // 'u'
+  const frameNum = parseInt(fileName[1],10); // 4
 
-    // 경로를 '/'로 분리하여 캐릭터 번호와 나머지 정보를 추출합니다.
-    const [characterNumber, ...rest] = path.split('/');
-    const [direction, frame] = rest[0].split('');
+  const dIdx = directionMap[dirChar];
+  const fIdx = frameMap.get(frameNum);
+  if (dIdx == null || fIdx == null) return;
 
-    // 캐릭터 번호가 존재하지 않는 경우 새로 초기화합니다.
-    if (!allImages[characterNumber]) {
-      allImages[characterNumber] = {};
-    }
+  allCharacterImages[charNo] ??= {};
+  allCharacterImages[charNo][dIdx] ??= [];
 
-    // 방향을 숫자로 변환합니다.
-    const directionIndex = directionMap[direction];
-    if (directionIndex === undefined) {
-      return;
-    }
-
-    // 방향에 대한 배열이 존재하지 않는 경우 새로 초기화합니다.
-    if (!allImages[characterNumber][directionIndex]) {
-      allImages[characterNumber][directionIndex] = [];
-    }
-
-    // 프레임 번호를 정수로 변환합니다.
-    const frameNumber = parseInt(frame, 10);
-    const index = frameMap.get(frameNumber);
-
-    if (index !== undefined) {
-      const img = new Image(); // Image 객체를 생성합니다.
-      img.src = context[key].default; // Image 객체에 이미지 경로를 설정합니다.
-      allImages[characterNumber][directionIndex][index] = img; // Image 객체를 저장합니다.
-    }
-  });
-
-  return allImages;
-};
-
-export default loadCharacterImages;
+  // mod.default 에는 “/src/assets/5/u4.png” 같은 URL 문자열
+  allCharacterImages[charNo][dIdx][fIdx] = mod.default;
+});

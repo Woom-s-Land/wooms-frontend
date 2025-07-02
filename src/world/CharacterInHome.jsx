@@ -1,13 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Sprite, Container } from '@pixi/react';
-import { Texture } from 'pixi.js';
 import collisions from '../assets/home/home-collisions';
 import {
   initializeCollisionMap,
   initializeBoundaries,
 } from '../utils/boundaryUtils';
 import Nickname from './Nickname';
-import loadCharacterImages from '../utils/loadCharacterImages';
+import { useCharacterTextures } from '../utils/useCharacterTextures';
 import InteractionSpeechBubble from './InteractionSpeechBubble';
 
 const Direction = {
@@ -51,11 +50,11 @@ const Character = ({
   const [isAnimating, setIsAnimating] = useState(false);
   const [isInteractionBed, setIsInteractionBed] = useState(false);
   const [isInteractionToilet, setIsInteractionToilet] = useState(false);
-  const [directionImages, setDirectionImages] = useState({});
 
   const animationFrameRef = useRef(null);
   const lastFrameTimeRef = useRef(0);
-
+  const textures = useCharacterTextures(costume);
+  
   // 경계 맵 생성
   useEffect(() => {
     const collisionMap = initializeCollisionMap(collisions, 61);
@@ -63,12 +62,6 @@ const Character = ({
       initializeBoundaries(collisionMap, BoundaryWidth, BoundaryHeight, 15)
     );
   }, []);
-
-  useEffect(() => {
-    const allImages = loadCharacterImages();
-    const images = allImages[costume];
-    setDirectionImages(images);
-  }, [costume]);
 
   // 충돌 or 상호작용 여부 판정 함수
   const boundaryCollision = useCallback((boundary, x, y) => {
@@ -233,11 +226,9 @@ const Character = ({
 
   return (
     <Container x={charX} y={charY}>
-      {directionImages[direction] && directionImages[direction][stepIndex] && (
+      {textures[direction]?.[stepIndex] && (
         <Sprite
-          texture={Texture.from(directionImages[direction][stepIndex])}
-          x={0}
-          y={0}
+          texture={textures[direction][stepIndex]}
           width={CHAR_WIDTH}
           height={CHAR_HEIGHT}
         />

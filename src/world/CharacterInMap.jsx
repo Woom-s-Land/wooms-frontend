@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Texture } from 'pixi.js';
-import loadCharacterImages from '../utils/loadCharacterImages';
+import { useCharacterTextures } from '../utils/useCharacterTextures';
 import collisions from '../assets/map/map_collisions';
 import OtherCharacter from './Characters';
 import Nickname from './Nickname';
@@ -17,6 +16,8 @@ const Direction = {
   RIGHT: 2,
   LEFT: 3,
 };
+
+
 
 const MAP_WIDTH = 2048;
 const MAP_HEIGHT = 1536;
@@ -54,19 +55,20 @@ const Character = ({
 }) => {
   const [stepIndex, setStepIndex] = useState(0);
   const [direction, setDirection] = useState(Direction.DOWN);
-  const [directionImages, setDirectionImages] = useState({});
   const [charX, setCharX] = useState(width / 2);
   const [charY, setCharY] = useState(height / 2);
   const [isAnimating, setIsAnimating] = useState(false);
   const [collision, setCollision] = useState([]);
   const [characters, setCharacters] = useState([]); // 캐릭터 목록 상태
 
+
+  const textures = useCharacterTextures(costume);
   const animationFrameRef = useRef(null);
   const lastFrameTimeRef = useRef(0);
 
   const BoundaryWidth = 32;
   const BoundaryHeight = 32;
-
+  
   // #stomp
   const [myChat, setMyChat] = useState('');
   useEffect(() => {
@@ -144,12 +146,6 @@ const Character = ({
       });
     }
   };
-
-  useEffect(() => {
-    const allImages = loadCharacterImages();
-    const images = allImages[costume];
-    setDirectionImages(images);
-  }, [costume]);
 
   useEffect(() => {
     const collisionMap = initializeCollisionMap(collisions, 64);
@@ -375,20 +371,18 @@ const Character = ({
     }
     animationFrameRef.current = requestAnimationFrame(animate);
   };
+  
 
   return (
     <>
       <Container x={charX} y={charY}>
-        {directionImages[direction] &&
-          directionImages[direction][stepIndex] && (
-            <Sprite
-              texture={Texture.from(directionImages[direction][stepIndex])}
-              x={0}
-              y={0}
-              width={CHAR_WIDTH}
-              height={CHAR_HEIGHT}
-            />
-          )}
+        {textures[direction]?.[stepIndex] && (
+          <Sprite
+            texture={textures[direction][stepIndex]}
+            width={CHAR_WIDTH}
+            height={CHAR_HEIGHT}
+          />
+        )}
         {myChat && (
           <SpeechBubble width={CHAR_WIDTH} height={CHAR_HEIGHT} text={myChat} />
         )}

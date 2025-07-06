@@ -68,8 +68,9 @@ const UploadModal = ({ onClose }) => {
         setMapId(id);
       } catch (err) {
         dispatch(
-          alertActions.showAlert({message: '사진 메타데이터 읽기에 실패하였습니다.', type: 'ERROR',})
+          alertActions.showAlert({message: '메타데이터가 없는 사진은 채움에 채워지지 않아요!', type: 'ERROR',})
         )
+        setMapId(0);
       }
     };
 
@@ -99,6 +100,7 @@ const UploadModal = ({ onClose }) => {
           message: '메타데이터가 없는 사진은 채움에 채워지지 않아요!',
           type: 'ERROR',
         });
+        setMapId(0);
       }
     };
 
@@ -113,6 +115,7 @@ const UploadModal = ({ onClose }) => {
       );
       return;
     }
+
     setLoading(true);
 
     try {
@@ -126,6 +129,7 @@ const UploadModal = ({ onClose }) => {
         type: 'image/png',
       });
       console.log("file : " + file);
+      console.log(mapId);
       await GroupPhotoApi.postPhoto(woomsId, mapId, file);
       console.log("돌아왔나?");
       dispatch(
@@ -140,10 +144,11 @@ const UploadModal = ({ onClose }) => {
       // 모달 창 닫기
       onClose(); // 모든 모달 창 닫기
     } catch (error) {
-      alertActions.showAlert({
-        message: '사진 업로드 중 오류가 발생하였습니다. 다시 시도해주세요.',
-        type: 'ERROR',
-      });
+        dispatch(alertActions.showAlert({
+          message: '사진 업로드 중 오류가 발생하였습니다. 다시 시도해주세요.',
+          type: 'ERROR',
+        })
+      )
     } finally {
       setLoading(false);
     }

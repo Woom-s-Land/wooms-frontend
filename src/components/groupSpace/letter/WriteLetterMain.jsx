@@ -19,6 +19,7 @@ const WriteLetterMain = ({ isOpen, onClose }) => {
   const [isUserModalOpen, setUserModalOpen] = useState(true);
   const [isLetterModalOpen, setLetterModalOpen] = useState(false);
   const [isDateModalOpen, setDateModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false); // loading 상태 추가
 
   useEffect(() => {
     setSendDateTime(new Date().toISOString());
@@ -48,6 +49,8 @@ const WriteLetterMain = ({ isOpen, onClose }) => {
   };
 
   const sendLetter = async () => {
+    if (loading) return;
+    setLoading(true);
     try {
       const response = await baseUrl.post(
         '/letters',
@@ -75,6 +78,8 @@ const WriteLetterMain = ({ isOpen, onClose }) => {
           type: 'ERROR',
         })
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -108,6 +113,7 @@ const WriteLetterMain = ({ isOpen, onClose }) => {
                 sendDateTime={sendDateTime}
                 onChange={handleSelectedDate}
                 onSubmit={sendLetter}
+                loading={loading}
               />
             )}
           </>

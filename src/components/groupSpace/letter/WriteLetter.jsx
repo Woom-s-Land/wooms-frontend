@@ -62,7 +62,7 @@ const WriteLetter = ({
             onChange={handleContentChange}
             className='absolute top-14 w-11/12 h-2/3 p-4 rounded resize-none bg-transparent overflow-hidden focus:outline-none leading-relaxed font-semibold'
             placeholder='편지 내용을 입력하세요!'
-            maxLength={350}
+            maxLength={500}
           />
           <div className='absolute bottom-36 right-2 p-4 flex flex-col items-end'>
             <p className='text-lg font-bold'>

@@ -4,6 +4,7 @@ import ButtonDetail from '../../group/ButtonDetail';
 import { GroupCommentApi } from '../../../apis/GroupSpaceApi';
 import { useDispatch } from 'react-redux';
 import { alertActions } from '../../../store/alertSlice';
+// throttle import 제거
 
 const Comment = ({ onClose }) => {
   const dispatch = useDispatch();
@@ -13,6 +14,7 @@ const Comment = ({ onClose }) => {
   const [comments, setComments] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(false); // loading 상태 추가
 
   // 댓글을 가져오는 함수
   const getComments = async () => {
@@ -33,8 +35,10 @@ const Comment = ({ onClose }) => {
   }, [woomsId, page]);
 
   // 댓글 작성 함수
-  const handleSubmit = async (event) => {
+  const doSubmit = async (event) => {
     event.preventDefault();
+    if (!inputValue.trim() || loading) return; // 중복 방지
+    setLoading(true);
     try {
       const response = await GroupCommentApi.postComment(woomsId, inputValue);
       setInputValue('');
@@ -52,6 +56,8 @@ const Comment = ({ onClose }) => {
           type: 'ERROR',
         })
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -66,7 +72,7 @@ const Comment = ({ onClose }) => {
         </h2>
         <div className='pr-8'>
           <form
-            onSubmit={handleSubmit}
+            onSubmit={doSubmit}
             className='absolute left-1/2 pl-10 ml-4 transform -translate-x-1/2 top-20 flex items-center justify-center'
             style={{ width: '600px', height: '60px' }}
           >
@@ -82,8 +88,13 @@ const Comment = ({ onClose }) => {
                   border: 'none',
                   background: 'transparent',
                 }}
+                disabled={loading}
               />
-              <ButtonDetail buttonText='작성' onClick={handleSubmit} />
+              <ButtonDetail
+                buttonText={loading ? '작성 중...' : '작성'}
+                onClick={doSubmit}
+                disabled={loading || !inputValue.trim()}
+              />
             </div>
           </form>
           <div className='mt-32'>

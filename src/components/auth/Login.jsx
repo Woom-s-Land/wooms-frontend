@@ -4,14 +4,15 @@ import { useNavigate, Link } from 'react-router-dom';
 import { authActions } from '../../store/authSlice';
 import { alertActions } from '../../store/alertSlice';
 import { settingActions } from '../../store/settingSlice';
-import axios from 'axios';
+import basicAxios from '../../libs/axios/basicAxios'
 import PasswordReset from './PasswordReset';
 import GitHubLogo from '../../assets/logo/github.svg';
 import GoogleLogo from '../../assets/logo/google.svg';
 import LoadingBus from '../common/LoadingBus';
 import imgLogo from '../../assets/logo/imgLogo.png';
 
-const baseUrl = 'https://wooms.duckdns.org';
+// const baseUrl = 'https://wooms.duckdns.org';
+const baseUrl = 'http://localhost:8080';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -46,10 +47,11 @@ const Login = () => {
     e.preventDefault();
     dispatch(settingActions.startMove());
     try {
-      await axios.post(`${baseUrl}/api/auth`, {
+      await basicAxios.post(`/auth`, {
         email: values.email,
         password: values.password,
-      });
+      },
+    );
 
       await getUserInfo();
       dispatch(authActions.login());
@@ -83,9 +85,7 @@ const Login = () => {
 
   const getUserInfo = async () => {
     try {
-      const response = await axios.get(`${baseUrl}/api/users/info`, {
-        withCredentials: true,
-      });
+      const response = await basicAxios.get(`/users/info`);
 
       dispatch(authActions.setUserInfo(response.data));
     } catch (error) {

@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import basicAxios from '../../libs/axios/basicAxios'
 
 import imgLogo from '../../assets/logo/imgLogo.png';
 
-const baseUrl = 'https://wooms.duckdns.org';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -61,7 +60,7 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${baseUrl}/api/auth/users`, {
+      const response = await basicAxios.post(`/auth/users`, {
         name: values.name,
         email: values.email,
         password: values.password,
@@ -78,14 +77,13 @@ const Signup = () => {
   const checkEmail = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${baseUrl}/api/auth/email`, {
+      setCodeAbled(true);
+      await basicAxios.post(`/auth/email`, {
         email: values.email,
       });
-      // 인증 코드 요청 버튼 활성화
-      setCodeAbled(true);
 
       setEmailMessage('인증 코드가 발송되었습니다.');
-      console.log(response.data);
+
     } catch (error) {
       setCodeAbled(false);
       // 10초 후 인증 코드 요청 버튼 활성화
@@ -104,7 +102,7 @@ const Signup = () => {
   const checkEmailCode = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${baseUrl}/api/auth/email/code`, {
+      const response = await basicAxios.post(`/auth/email/code`, {
         email: values.email,
         code: values.code,
       });

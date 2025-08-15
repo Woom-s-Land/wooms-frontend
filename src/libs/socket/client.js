@@ -3,9 +3,10 @@ const token = '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3d';
 
 const client = new Client({
   brokerURL: 'wss://wooms.duckdns.org/ws',
+  // brokerURL: 'ws://localhost:8080/ws',
   reconnectDelay: 5000,
-  heartbeatIncoming: 4000,
-  heartbeatOutgoing: 4000,
+  heartbeatIncoming: 10000,
+  heartbeatOutgoing: 10000,
   onConnect: (frame) => {
     console.log('Connected: ' + frame);
   },

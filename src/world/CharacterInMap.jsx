@@ -54,6 +54,7 @@ const CharacterInMap = ({
   const [charY, setCharY] = useState(height / 2);
   const [isAnimating, setIsAnimating] = useState(false);
   const [collision, setCollision] = useState([]);
+  const announcedRef = useRef(false);
 
   const [myChat, setMyChat] = useState('');
 
@@ -90,6 +91,29 @@ const CharacterInMap = ({
     },
     [collision]
   );
+
+  useEffect(() => {
+    if (connected && sendMove && !announcedRef.current) {
+      announcedRef.current = true;
+
+      const worldX = charX - backgroundX;
+      const worldY = charY - backgroundY;
+
+      sendMove({
+        x: worldX,
+        y: worldY,
+        direction,    
+        stepId: 1,    
+        nickname,
+        costume,
+      });
+    }
+  }, [connected, sendMove, charX, charY, backgroundX, backgroundY, direction, nickname, costume]);
+
+  // 끊기면 다음 연결 때 또 보낼 수 있도록 리셋
+  useEffect(() => {
+    if (!connected) announcedRef.current = false;
+  }, [connected]);
 
   // 키 입력 처리
   const handleArrowKeyDown = useCallback(

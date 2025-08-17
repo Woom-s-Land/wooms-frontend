@@ -2,7 +2,7 @@ name: Frontend CI/CD (scp → SSH)
 
 on:
   push:
-    branches: [ 'feat#249' ]
+    branches: [ 'develop#2' ]
   workflow_dispatch:
 
 jobs:

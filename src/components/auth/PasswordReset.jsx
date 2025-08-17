@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-
-const baseUrl = 'http://wooms.duckdns.org';
+import basicAxios from '../../libs/axios/basicAxios'
 
 const PasswordReset = ({ onClose }) => {
   const [emailInput, setEmailInput] = useState('');
@@ -42,13 +40,9 @@ const PasswordReset = ({ onClose }) => {
   const getTempPassword = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${baseUrl}/api/auth/password`, {
-        email: emailInput,
-      });
-      console.log('임시 비밀번호 발급 성공', response);
+      const response = await basicAxios.post(`/auth/password`, {email: emailInput});
       setMessage('임시 비밀번호가 발급되었습니다. 이메일을 확인해주세요.');
     } catch (error) {
-      console.error('임시 비밀번호 발급 실패', error);
       setIsValidEmail(false);
       setMessage('이메일 전송하는데 실패했습니다. 잠시 후 다시 시도해주세요.');
     }

@@ -11,8 +11,8 @@ import GoogleLogo from '../../assets/logo/google.svg';
 import LoadingBus from '../common/LoadingBus';
 import imgLogo from '../../assets/logo/imgLogo.png';
 
-// const baseUrl = 'https://wooms.duckdns.org';
-const baseUrl = 'http://localhost:8080';
+const baseUrl = 'https://wooms.duckdns.org';
+// const baseUrl = 'http://localhost:8080';
 
 const Login = () => {
   const dispatch = useDispatch();

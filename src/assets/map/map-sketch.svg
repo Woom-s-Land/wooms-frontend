@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="116" viewBox="0 0 128 116" shape-rendering="crispEdges" font-family="'Pretendard','Noto Sans KR',sans-serif">
+  <!-- ground shadow -->
+  <ellipse cx="64" cy="110" rx="46" ry="6" fill="#000000" opacity="0.10"/>
+
+  <!-- roof -->
+  <polygon points="14,30 64,8 114,30" fill="#C06A34"/>
+  <polygon points="20,30 64,12 108,30" fill="#E08A4E"/>
+  <!-- roof shingle hints -->
+  <g fill="#C06A34" opacity="0.55">
+    <rect x="34" y="22" width="4" height="2"/>
+    <rect x="54" y="16" width="4" height="2"/>
+    <rect x="74" y="18" width="4" height="2"/>
+    <rect x="90" y="24" width="4" height="2"/>
+  </g>
+  <!-- roof eave -->
+  <rect x="14" y="30" width="100" height="6" fill="#8B5A3C"/>
+
+  <!-- signboard -->
+  <rect x="40" y="34" width="48" height="18" fill="#F8E4C8" stroke="#8B5A3C" stroke-width="2"/>
+  <text x="64" y="48" text-anchor="middle" font-size="12" font-weight="bold" fill="#6B4220">그림판</text>
+
+  <!-- walls -->
+  <rect x="20" y="52" width="88" height="52" fill="#F5E3C8"/>
+  <rect x="20" y="52" width="88" height="52" fill="none" stroke="#A9794C" stroke-width="2"/>
+  <!-- wall corner posts -->
+  <rect x="20" y="52" width="4" height="52" fill="#A9794C"/>
+  <rect x="104" y="52" width="4" height="52" fill="#A9794C"/>
+
+  <!-- left window: painter's palette -->
+  <rect x="28" y="60" width="26" height="26" fill="#BFE3EC" stroke="#8B5A3C" stroke-width="2"/>
+  <ellipse cx="41" cy="73" rx="9" ry="7" fill="#F8E4C8" stroke="#8B5A3C" stroke-width="1"/>
+  <circle cx="37" cy="70" r="1.6" fill="#E8505B"/>
+  <circle cx="42" cy="69" r="1.6" fill="#F2C14E"/>
+  <circle cx="46" cy="72" r="1.6" fill="#5BC0BE"/>
+  <circle cx="40" cy="75" r="1.6" fill="#5A7FB5"/>
+  <circle cx="44" cy="76" r="1.6" fill="#8FBF5A"/>
+
+  <!-- center door -->
+  <rect x="58" y="68" width="20" height="36" fill="#8B5A3C" stroke="#6B4220" stroke-width="2"/>
+  <rect x="62" y="72" width="12" height="14" fill="#A9794C"/>
+  <circle cx="74" cy="88" r="1.6" fill="#F2C14E"/>
+
+  <!-- right window: easel with a tiny canvas -->
+  <rect x="82" y="60" width="22" height="26" fill="#BFE3EC" stroke="#8B5A3C" stroke-width="2"/>
+  <!-- easel legs -->
+  <rect x="87" y="66" width="2" height="18" fill="#6B4220"/>
+  <rect x="99" y="66" width="2" height="18" fill="#6B4220"/>
+  <rect x="92" y="74" width="6" height="10" fill="#6B4220"/>
+  <!-- canvas -->
+  <rect x="86" y="64" width="16" height="13" fill="#FEFCF5" stroke="#6B4220" stroke-width="1"/>
+  <rect x="89" y="70" width="6" height="4" fill="#E8505B"/>
+  <rect x="94" y="67" width="4" height="4" fill="#5BC0BE"/>
+
+  <!-- base / step -->
+  <rect x="16" y="104" width="96" height="6" fill="#A9794C"/>
+  <rect x="16" y="104" width="96" height="2" fill="#C99A6A"/>
+</svg>

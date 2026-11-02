@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Stage, Sprite, Container, AnimatedSprite } from '@pixi/react';
 import { OutlineFilter } from '@pixi/filter-outline';
@@ -27,6 +28,7 @@ const outlineStyle = new OutlineFilter(4, 0xbcff89);
 
 const Map = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const loading = useSelector((state) => state.setting.isMoving);
 
   useEffect(() => {
@@ -65,6 +67,8 @@ const Map = () => {
   const [isNearPhotomap, setIsNearPhotomap] = useState(false);
   const [isNearGuestbook, setIsNearGuestbook] = useState(false);
   const [isNearRadio, setIsNearRadio] = useState(false);
+  const [isNearSketch, setIsNearSketch] = useState(false);
+  const [isNearMafia, setIsNearMafia] = useState(false);
 
   const [isInteractive, setIsInteractive] = useState(false);
   const [radioReadInteractive, setRadioReadInteractive] = useState(false);
@@ -83,6 +87,8 @@ const Map = () => {
   const photomapX = 1260, photomapY = 515, photomapWidth = 98, photomapHeight = 90;
   const guestbookX = 347, guestbookY = 620, guestbookWidth = 116, guestbookHeight = 116;
   const radioX = 490, radioY = 450, radioWidth = 80, radioHeight = 63;
+  const sketchX = 820, sketchY = 980, sketchWidth = 130, sketchHeight = 118;
+  const mafiaX = 1080, mafiaY = 1040, mafiaWidth = 130, mafiaHeight = 118;
   const fountainX = 1337, fountainY = 880, fountainWidth = 239, fountainHeight = 176;
   const getRandomDelay = () => Math.random() * 10000;
 
@@ -100,6 +106,10 @@ const Map = () => {
       gy: guestbookY + backgroundY,
       rx: radioX + backgroundX,
       ry: radioY + backgroundY,
+      sx: sketchX + backgroundX,
+      sy: sketchY + backgroundY,
+      mfx: mafiaX + backgroundX,
+      mfy: mafiaY + backgroundY,
       fx: fountainX + backgroundX,
       fy: fountainY + backgroundY,
     };
@@ -219,12 +229,14 @@ const Map = () => {
       if (isNearPhoto) setIsOpenPhoto(true);
       else if (isNearPhotomap) setIsOpenPhotomap(true);
       else if (isNearGuestbook) setIsOpenGuestbook(true);
+      else if (isNearSketch) navigate(`/sketch/${roomId}`);
+      else if (isNearMafia) navigate(`/mafia/${roomId}`);
     } else if (radioReadInteractive) {
       if (isNearRadio) setIsOpenRadioRead(true);
     } else if (radioWriteInteractive) {
       if (isNearRadio) setIsOpenRadioWrite(true);
     }
-  }, [isInteractive, radioReadInteractive, radioWriteInteractive, isNearPhoto, isNearPhotomap, isNearGuestbook, isNearRadio]);
+  }, [isInteractive, radioReadInteractive, radioWriteInteractive, isNearPhoto, isNearPhotomap, isNearGuestbook, isNearRadio, isNearSketch, isNearMafia, navigate, roomId]);
 
   const handleClosePhoto = () => setIsOpenPhoto(false);
   const handleClosePhotomap = () => setIsOpenPhotomap(false);
@@ -253,6 +265,8 @@ const Map = () => {
     setIsNearPhotomap(isNear(cx, cy, photomapX, photomapY, photomapWidth, photomapHeight));
     setIsNearGuestbook(isNear(cx, cy, guestbookX, guestbookY, guestbookWidth, guestbookHeight));
     setIsNearRadio(isNear(cx, cy, radioX, radioY, radioWidth, radioHeight));
+    setIsNearSketch(isNear(cx, cy, sketchX, sketchY, sketchWidth, sketchHeight));
+    setIsNearMafia(isNear(cx, cy, mafiaX, mafiaY, mafiaWidth, mafiaHeight));
   }, [characterX, characterY, backgroundX, backgroundY]);
 
   const handleArrowKeyDown = (e) => {
@@ -302,6 +316,14 @@ const Map = () => {
                   y={calculateStaticElementPosition().ry - radioHeight}
                 />
               )}
+              <Sprite image={mapImages.sketch} width={sketchWidth} height={sketchHeight}
+                x={calculateStaticElementPosition().sx} y={calculateStaticElementPosition().sy}
+                filters={isNearSketch ? [outlineStyle] : []}
+              />
+              <Sprite image={mapImages.mafia} width={mafiaWidth} height={mafiaHeight}
+                x={calculateStaticElementPosition().mfx} y={calculateStaticElementPosition().mfy}
+                filters={isNearMafia ? [outlineStyle] : []}
+              />
               <AnimatedSprite textures={fountain} isPlaying animationSpeed={0.1}
                 x={fountainX + backgroundX} y={fountainY + backgroundY}
                 width={fountainWidth} height={fountainHeight}

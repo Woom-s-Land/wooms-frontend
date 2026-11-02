@@ -16,6 +16,8 @@ import StoryWrite from './components/groupSpace/radio/StoryWriteModal';
 import StoryRead from './components/groupSpace/radio/StoryReadModal';
 import Header from './components/navbar/Menubar.jsx';
 import GroupDetail from './components/group/GroupDetail.jsx';
+import SketchRoom from './components/groupSpace/sketch/SketchRoom.jsx';
+import MafiaGame from './components/groupSpace/sketchmafia/MafiaGame.jsx';
 import Loading from './components/common/Loading.jsx';
 import PlayBgm from './components/bgm/PlayBgm.jsx';
 import AuthenticationCheck from './hoc/Auth.jsx';
@@ -30,6 +32,8 @@ function App() {
         <Route path='/home' element={AuthenticationCheck(Home, true)} />
         <Route path='/signup' element={AuthenticationCheck(Signup, null)} />
         <Route path='/map/:woomsId' element={AuthenticationCheck(Map, true)} />
+        <Route path='/sketch/:woomsId' element={AuthenticationCheck(SketchRoom, true)} />
+        <Route path='/mafia/:woomsId' element={AuthenticationCheck(MafiaGame, true)} />
         <Route path='/login' element={AuthenticationCheck(Login, null)} />
 
         <Route path='/photo' element={<Photo />} />

@@ -1,9 +1,9 @@
 import { Client } from '@stomp/stompjs';
-const token = '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3d';
+import { NettyClient } from './NettyClient';
 
-const client = new Client({
-  // brokerURL: 'wss://wooms.duckdns.org/ws',
-  brokerURL: 'ws://localhost:8080/ws',
+const transport = import.meta.env.VITE_SOCKET_TRANSPORT || 'stomp';
+const stompClient = new Client({
+  brokerURL: import.meta.env.VITE_STOMP_WS_URL || 'ws://localhost:8080/ws',
   reconnectDelay: 5000,
   heartbeatIncoming: 10000,
   heartbeatOutgoing: 10000,
@@ -19,4 +19,16 @@ const client = new Client({
   },
 });
 
+let client;
+if (transport === 'stomp') {
+  client = stompClient;
+} else if (transport === 'netty') {
+  client = new NettyClient({
+    url: import.meta.env.VITE_NETTY_WS_URL || 'ws://localhost:8090/ws',
+  });
+} else {
+  throw new Error(`Unknown VITE_SOCKET_TRANSPORT value: ${transport}`);
+}
+
+export { stompClient, transport };
 export default client;

@@ -44,7 +44,7 @@ export default function MafiaGame() {
 
   // ---- publish helpers ----
   const send = useCallback((suffix, body) => {
-    if (!connectedRef.current) return;
+    if (!connectedRef.current || !client.connected) return;
     client.publish({ destination: `/ws/send/sketchmafia/${suffix}/${roomId}`, body: JSON.stringify(body || {}) });
   }, [roomId]);
 
@@ -91,7 +91,14 @@ export default function MafiaGame() {
       send('join', { nickname, costume });
     };
 
+    const handleDisconnect = () => {
+      connectedRef.current = false;
+      setConnected(false);
+      setStatusMsg('연결이 끊겼습니다. 다시 연결을 확인해 주세요.');
+    };
+
     client.onConnect = subscribeAll;
+    client.onDisconnect = handleDisconnect;
     if (client.connected) subscribeAll();
     if (!client.active) client.activate();
 
@@ -100,6 +107,7 @@ export default function MafiaGame() {
       // only clear the connect handler if it's still ours (avoid a stale,
       // unmounted component's subscribeAll firing on a later reconnect)
       if (client.onConnect === subscribeAll) client.onConnect = undefined;
+      if (client.onDisconnect === handleDisconnect) client.onDisconnect = undefined;
       if (client.active) client.deactivate();
       connectedRef.current = false;
       setConnected(false);

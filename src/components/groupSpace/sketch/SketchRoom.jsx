@@ -95,13 +95,21 @@ export default function SketchRoom() {
       );
     };
 
+    const handleDisconnect = () => {
+      connectedRef.current = false;
+      drawingRef.current = false;
+      setConnected(false);
+    };
+
     client.onConnect = subscribeAll;
+    client.onDisconnect = handleDisconnect;
     if (client.connected) subscribeAll(); // already connected from a prior route
     if (!client.active) client.activate();
 
     return () => {
       subs.forEach((s) => { try { s.unsubscribe(); } catch (_) {} });
       if (client.onConnect === subscribeAll) client.onConnect = undefined;
+      if (client.onDisconnect === handleDisconnect) client.onDisconnect = undefined;
       if (client.active) client.deactivate();
       connectedRef.current = false;
       setConnected(false);
@@ -125,6 +133,7 @@ export default function SketchRoom() {
   };
 
   const paintAt = (e) => {
+    if (!connectedRef.current || !client.connected) return;
     const { x, y } = cellFromEvent(e);
     if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) return;
     const stroke = { nickname, tool, x, y, colorIndex };
@@ -138,7 +147,7 @@ export default function SketchRoom() {
 
   // archive the current mural into the gallery and start a fresh blank wall
   const archiveWall = () => {
-    if (!connectedRef.current) return;
+    if (!connectedRef.current || !client.connected) return;
     if (!window.confirm('현재 벽화를 보관함에 저장하고 새 벽화를 시작할까요?')) return;
     client.publish({
       destination: `/ws/send/sketch/save/${woomsId}`,

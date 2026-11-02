@@ -141,11 +141,14 @@ const Map = () => {
   useEffect(() => {
     if (!roomId) return;
 
-    client.onConnect = () => {
+    let subscriptions = [];
+    const subscribeAll = () => {
+      subscriptions.forEach((subscription) => subscription.unsubscribe());
+      subscriptions = [];
       setConnected(true);
 
       // 1) 초기 스냅샷: 개인 큐
-      const initSub = client.subscribe('/user/queue/init', (msg) => {
+      subscriptions.push(client.subscribe('/user/queue/init', (msg) => {
         try {
           const data = JSON.parse(msg.body);
           console.log(data);
@@ -153,27 +156,27 @@ const Map = () => {
         } catch (e) {
           console.error('init parse error', e);
         }
-      });
+      }));
 
       // 2) MOVE 브로드캐스트
-      const moveSub = client.subscribe(`/ws/wooms/move/${roomId}`, (msg) => {
+      subscriptions.push(client.subscribe(`/ws/wooms/move/${roomId}`, (msg) => {
         try {
           const data = JSON.parse(msg.body);
           upsertOther(data);
         } catch (e) {
           console.error('move parse error', e);
         }
-      });
+      }));
 
       // 3) DISCONNECT 브로드캐스트
-      const discSub = client.subscribe(`/ws/wooms/disconnect/${roomId}`, (msg) => {
+      subscriptions.push(client.subscribe(`/ws/wooms/disconnect/${roomId}`, (msg) => {
         try {
           const { nickname: who } = JSON.parse(msg.body);
           removeOther(who);
         } catch (e) {
           console.error('disc parse error', e);
         }
-      });
+      }));
 
       // // 4) Fallback: 개인 큐를 못 받는 이슈 대비해서 HTTP 초기화
       // const timer = setTimeout(async () => {
@@ -187,21 +190,18 @@ const Map = () => {
       //   }
       // }, 600);
 
-      client.onDisconnect = () => setConnected(false);
-
-      return () => {
-        try {
-          initSub.unsubscribe();
-          moveSub.unsubscribe();
-          discSub.unsubscribe();
-        } catch (_) {}
-        clearTimeout(timer);
-      };
     };
+    const handleDisconnect = () => setConnected(false);
+    client.onConnect = subscribeAll;
+    client.onDisconnect = handleDisconnect;
+    if (client.connected) subscribeAll();
 
-    if (!client.active) client.activate();
+    if (!client.active) void client.activate();
     return () => {
-      if (client.active) client.deactivate();
+      subscriptions.forEach((subscription) => subscription.unsubscribe());
+      if (client.onConnect === subscribeAll) client.onConnect = undefined;
+      if (client.onDisconnect === handleDisconnect) client.onDisconnect = undefined;
+      if (client.active) void client.deactivate();
     };
   }, [roomId, upsertOther, removeOther]);
 
